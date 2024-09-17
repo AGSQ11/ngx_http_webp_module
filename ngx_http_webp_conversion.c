@@ -33,7 +33,8 @@ ngx_http_webp_convert_thread_handler(void *data, ngx_log_t *log)
             }
         }
         avifDecoderDestroy(decoder);
-    } else if (ngx_strstr(ctx->src_path.data, ".jxl")) {
+    }     #ifdef NGX_HTTP_WEBP_JXL_ENABLED
+    else if (ngx_strstr(ctx->src_path.data, ".jxl")) {
         JxlDecoder *decoder = JxlDecoderCreate(NULL);
         JxlBasicInfo info;
         JxlPixelFormat format = {4, JXL_TYPE_UINT8, JXL_LITTLE_ENDIAN, 0};
@@ -48,6 +49,7 @@ ngx_http_webp_convert_thread_handler(void *data, ngx_log_t *log)
         }
         JxlDecoderDestroy(decoder);
     }
+    #endif
 
     if (raw_data == NULL) {
         ngx_log_error(NGX_LOG_ERR, log, 0, "Failed to decode image: %V", &ctx->src_path);

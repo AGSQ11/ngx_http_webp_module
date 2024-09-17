@@ -7,8 +7,11 @@
 #include <webp/encode.h>
 #include <webp/decode.h>
 #include <avif/avif.h>
+
+#ifdef NGX_HTTP_WEBP_JXL_ENABLED
 #include <jxl/encode.h>
 #include <jxl/decode.h>
+#endif
 
 #define NGX_HTTP_WEBP_LOG(level, log, err, fmt, ...) \
     ngx_log_error(level, log, err, "[ngx_http_webp_module] " fmt, ##__VA_ARGS__)

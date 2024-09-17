@@ -4,11 +4,27 @@ if test -n "$ngx_module_link"; then
     ngx_module_type=HTTP
     ngx_module_name=ngx_http_webp_module
     ngx_module_srcs="$ngx_addon_dir/ngx_http_webp_module.c $ngx_addon_dir/ngx_http_webp_cache.c $ngx_addon_dir/ngx_http_webp_conversion.c $ngx_addon_dir/ngx_http_webp_init.c $ngx_addon_dir/ngx_http_webp_header.c"
-    ngx_module_libs="-lwebp -lavif -ljxl"
+    ngx_module_libs="-lwebp -lavif"
+
+    if [ "$HTTP_WEBP_JXL" != "NO" ]; then
+        ngx_module_libs="$ngx_module_libs -ljxl"
+        CFLAGS="$CFLAGS -DNGX_HTTP_WEBP_JXL_ENABLED"
+    fi
 
     . auto/module
 else
     HTTP_MODULES="$HTTP_MODULES ngx_http_webp_module"
     NGX_ADDON_SRCS="$NGX_ADDON_SRCS $ngx_addon_dir/ngx_http_webp_module.c $ngx_addon_dir/ngx_http_webp_cache.c $ngx_addon_dir/ngx_http_webp_conversion.c $ngx_addon_dir/ngx_http_webp_init.c $ngx_addon_dir/ngx_http_webp_header.c"
-    CORE_LIBS="$CORE_LIBS -lwebp -lavif -ljxl"
+    CORE_LIBS="$CORE_LIBS -lwebp -lavif"
+
+    if [ "$HTTP_WEBP_JXL" != "NO" ]; then
+        CORE_LIBS="$CORE_LIBS -ljxl"
+        CFLAGS="$CFLAGS -DNGX_HTTP_WEBP_JXL_ENABLED"
+    fi
+fi
+
+if [ "$HTTP_WEBP_JXL" = "NO" ]; then
+    echo "JPEG XL support is disabled"
+else
+    echo "JPEG XL support is enabled"
 fi

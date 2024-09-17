@@ -2,12 +2,12 @@
 
 ## Overview
 
-The NGINX ENGIWBP (ENGINYRING WebP) module is a dynamic image conversion and optimization solution for NGINX. It provides on-the-fly conversion of JPEG, PNG, and AVIF images to WebP format, with intelligent caching and serving capabilities. JPEG XL support is optional and may require additional steps to implement.
+The NGINX ENGIWBP (ENGINYRING WebP) module is a dynamic image conversion and optimization solution for NGINX. It provides on-the-fly conversion of JPEG, PNG, and AVIF images to WebP format, with intelligent caching and serving capabilities. JPEG XL support is optional and can be enabled or disabled during compilation.
 
 ## Features
 
 - On-the-fly conversion of JPEG, PNG, and AVIF to WebP
-- Optional JPEG XL support (advanced setup required)
+- Optional JPEG XL support (can be enabled/disabled during compilation)
 - Configurable WebP quality settings
 - Intelligent caching mechanism
 - Rate limiting to prevent abuse
@@ -35,25 +35,13 @@ The NGINX ENGIWBP (ENGINYRING WebP) module is a dynamic image conversion and opt
 
 2. (Optional) Install JPEG XL support:
    
-   JPEG XL and its dependencies may not be available in standard repositories. You can attempt to build it from source:
-
+   If you want JPEG XL support, install libjxl-dev if available in your repositories:
+   
    ```bash
-   sudo apt-get install cmake gcc g++ make pkg-config
-   git clone https://github.com/libjxl/libjxl.git
-   cd libjxl
-   git submodule update --init --recursive
-   mkdir build && cd build
-   cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF ..
-   cmake --build . -- -j$(nproc)
-   sudo cmake --install .
-   sudo ldconfig
+   sudo apt-get install libjxl-dev
    ```
-
-   If you encounter issues, you may need to build without some optional features:
-
-   ```bash
-   cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DJPEGXL_ENABLE_JNIS=OFF -DJPEGXL_ENABLE_SKCMS=OFF -DJPEGXL_ENABLE_VIEWERS=OFF -DJPEGXL_ENABLE_PLUGINS=OFF ..
-   ```
+   
+   If not available, you may need to compile it from source. Refer to the JPEG XL project documentation for instructions.
 
 3. Download and extract the NGINX source:
 
@@ -73,7 +61,7 @@ The NGINX ENGIWBP (ENGINYRING WebP) module is a dynamic image conversion and opt
 
 5. Configure NGINX with the module:
 
-   With JPEG XL support (if successfully installed):
+   With JPEG XL support:
    ```bash
    ./configure --add-module=../ngx_http_webp_module --with-threads
    ```
@@ -90,25 +78,6 @@ The NGINX ENGIWBP (ENGINYRING WebP) module is a dynamic image conversion and opt
    ```bash
    make
    sudo make install
-   ```
-
-### Building Without JPEG XL Support
-
-If you're unable to install JPEG XL or prefer not to use it, follow these steps:
-
-1. Edit `ngx_http_webp_module.h` and comment out JPEG XL includes:
-   ```c
-   // #include <jxl/encode.h>
-   // #include <jxl/decode.h>
-   ```
-
-2. Edit `ngx_http_webp_conversion.c` and remove or comment out JPEG XL related code in the `ngx_http_webp_convert_thread_handler` function.
-
-3. Edit the `config` file and remove `-ljxl` from the `ngx_module_libs` line.
-
-4. Configure NGINX without JPEG XL:
-   ```bash
-   ./configure --add-module=../ngx_http_webp_module --with-threads --without-jxl
    ```
 
 ## Configuration

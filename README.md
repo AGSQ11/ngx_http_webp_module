@@ -56,19 +56,19 @@ The NGINX ENGIWBP (ENGINYRING WebP) module is a dynamic image conversion and opt
 4. Clone the ENGIWBP module repository:
 
    ```bash
-   git clone https://github.com/AGSQ11/ngx_http_webp_module.git
+   git clone https://github.com/your-username/ngx_http_webp_module.git
    ```
 
 5. Configure NGINX with the module:
 
-   With JPEG XL support:
+   With JPEG XL support (default if libjxl is available):
    ```bash
    ./configure --add-module=../ngx_http_webp_module --with-threads
    ```
 
    Without JPEG XL support:
    ```bash
-   ./configure --add-module=../ngx_http_webp_module --with-threads --without-jxl
+   ./configure --add-module=../ngx_http_webp_module --with-threads --with-http_webp_jxl=no
    ```
 
    Add any other configuration options you typically use.
@@ -79,7 +79,7 @@ The NGINX ENGIWBP (ENGINYRING WebP) module is a dynamic image conversion and opt
    make
    sudo make install
    ```
-
+   
 ## Configuration
 
 Add the following directives to your NGINX configuration file within a `server` or `location` block:

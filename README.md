@@ -56,7 +56,7 @@ The NGINX ENGIWBP (ENGINYRING WebP) module is a dynamic image conversion and opt
 4. Clone the ENGIWBP module repository:
 
    ```bash
-   git clone https://github.com/your-username/ngx_http_webp_module.git
+   git clone https://github.com/AGSQ11/ngx_http_webp_module.git
    ```
 
 5. Configure NGINX with the module:

@@ -1,6 +1,6 @@
 ngx_addon_name=ngx_http_webp_module
 
-# Check if JPEG XL support should be disabled
+# Check if JPEG XL support should be enabled
 ngx_feature="JPEG XL support"
 ngx_feature_name="NGX_HTTP_WEBP_JXL_ENABLED"
 ngx_feature_run=no
@@ -25,8 +25,8 @@ fi
 if test -n "$ngx_module_link"; then
     ngx_module_type=HTTP
     ngx_module_name=ngx_http_webp_module
-    ngx_module_srcs="$ngx_addon_dir/ngx_http_webp_module.c $ngx_addon_dir/ngx_http_webp_cache.c $ngx_addon_dir/ngx_http_webp_conversion.c $ngx_addon_dir/ngx_http_webp_init.c $ngx_addon_dir/ngx_http_webp_header.c"
-    ngx_module_libs="-lwebp -lavif"
+    ngx_module_srcs="$ngx_addon_dir/ngx_http_webp_module.c $ngx_addon_dir/ngx_http_webp_cache.c $ngx_addon_dir/ngx_http_webp_conversion.c"
+    ngx_module_libs="-lwebp -lavif -lpthread"
 
     if [ "$HTTP_WEBP_JXL" != "NO" ]; then
         ngx_module_libs="$ngx_module_libs -ljxl"
@@ -35,8 +35,8 @@ if test -n "$ngx_module_link"; then
     . auto/module
 else
     HTTP_MODULES="$HTTP_MODULES ngx_http_webp_module"
-    NGX_ADDON_SRCS="$NGX_ADDON_SRCS $ngx_addon_dir/ngx_http_webp_module.c $ngx_addon_dir/ngx_http_webp_cache.c $ngx_addon_dir/ngx_http_webp_conversion.c $ngx_addon_dir/ngx_http_webp_init.c $ngx_addon_dir/ngx_http_webp_header.c"
-    CORE_LIBS="$CORE_LIBS -lwebp -lavif"
+    NGX_ADDON_SRCS="$NGX_ADDON_SRCS $ngx_addon_dir/ngx_http_webp_module.c $ngx_addon_dir/ngx_http_webp_cache.c $ngx_addon_dir/ngx_http_webp_conversion.c"
+    CORE_LIBS="$CORE_LIBS -lwebp -lavif -lpthread"
 
     if [ "$HTTP_WEBP_JXL" != "NO" ]; then
         CORE_LIBS="$CORE_LIBS -ljxl"
@@ -48,3 +48,22 @@ if [ "$HTTP_WEBP_JXL" = "NO" ]; then
 else
     echo "JPEG XL support is enabled"
 fi
+
+# Check for thread pool support
+ngx_feature="Thread pool support"
+ngx_feature_name="NGX_THREADS"
+ngx_feature_run=no
+ngx_feature_incs="#include <ngx_thread_pool.h>"
+ngx_feature_path=
+ngx_feature_libs=
+ngx_feature_test="ngx_thread_pool_t pool;"
+
+. auto/feature
+
+if [ $ngx_found = no ]; then
+    echo "Error: Thread pool support is required for this module."
+    echo "Please compile NGINX with --with-threads option."
+    exit 1
+fi
+
+have=NGX_THREADS . auto/have

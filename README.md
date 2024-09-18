@@ -1,4 +1,4 @@
-# NGINX ENGIWBP Module
+# NGINX ENGIWBP Module - Still pre-Alpha - lots of bugs. :)
 
 ## Overview
 

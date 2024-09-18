@@ -1,6 +1,6 @@
 #include "ngx_http_webp_module.h"
 
-static ngx_int_t
+ngx_int_t
 ngx_http_webp_handler(ngx_http_request_t *r)
 {
     ngx_http_webp_loc_conf_t *conf;
@@ -23,7 +23,7 @@ ngx_http_webp_handler(ngx_http_request_t *r)
         return NGX_DECLINED;
     }
 
-    ngx_str_t *accept = ngx_http_get_header_in(r, "Accept");
+    ngx_str_t *accept = ngx_http_get_variable(r, &ngx_http_accept_header_key, 0);
     if (accept == NULL || ngx_strstr(accept->data, "image/webp") == NULL) {
         NGX_HTTP_WEBP_LOG(NGX_LOG_DEBUG, r->connection->log, 0,
                           "Client does not support WebP");
@@ -59,7 +59,10 @@ ngx_http_webp_handler(ngx_http_request_t *r)
         return NGX_HTTP_TOO_MANY_REQUESTS;
     }
 
-    generate_hash(r->unparsed_uri.data, r->unparsed_uri.len, hash);
+    ngx_md5_t md5;
+    ngx_md5_init(&md5);
+    ngx_md5_update(&md5, r->unparsed_uri.data, r->unparsed_uri.len);
+    ngx_md5_final(hash, &md5);
 
     src_path = *uri;
     dst_path.len = conf->cache_dir.len + sizeof(hash) + 5;
@@ -84,7 +87,7 @@ ngx_http_webp_handler(ngx_http_request_t *r)
     return ngx_http_webp_serve_file(r, &dst_path);
 }
 
-static ngx_int_t
+ngx_int_t
 ngx_http_webp_lookup_cache(ngx_http_request_t *r, ngx_str_t *cache_key, ngx_str_t *file_path)
 {
     ngx_http_webp_loc_conf_t *conf = ngx_http_get_module_loc_conf(r, ngx_http_webp_module);
@@ -137,7 +140,7 @@ ngx_http_webp_lookup_cache(ngx_http_request_t *r, ngx_str_t *cache_key, ngx_str_
     return NGX_DECLINED;
 }
 
-static ngx_int_t
+ngx_int_t
 ngx_http_webp_store_cache(ngx_http_request_t *r, ngx_str_t *webp_path, uint8_t *webp_data, size_t webp_size)
 {
     ngx_http_webp_loc_conf_t *conf = ngx_http_get_module_loc_conf(r, ngx_http_webp_module);
@@ -147,7 +150,10 @@ ngx_http_webp_store_cache(ngx_http_request_t *r, ngx_str_t *webp_path, uint8_t *
     ngx_rbtree_node_t *node;
     u_char key[SHA256_DIGEST_LENGTH * 2];
 
-    generate_hash(webp_path->data, webp_path->len, key);
+    ngx_md5_t md5;
+    ngx_md5_init(&md5);
+    ngx_md5_update(&md5, webp_path->data, webp_path->len);
+    ngx_md5_final(key, &md5);
 
     ngx_shmtx_lock(&shpool->mutex);
 
@@ -193,7 +199,7 @@ ngx_http_webp_store_cache(ngx_http_request_t *r, ngx_str_t *webp_path, uint8_t *
     return NGX_OK;
 }
 
-static ngx_int_t
+ngx_int_t
 ngx_http_webp_invalidate_cache(ngx_http_request_t *r)
 {
     ngx_http_webp_loc_conf_t *conf = ngx_http_get_module_loc_conf(r, ngx_http_webp_module);

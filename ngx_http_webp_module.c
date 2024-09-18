@@ -107,7 +107,7 @@ ngx_module_t ngx_http_webp_module = {
     NGX_MODULE_V1_PADDING
 };
 
-static void *
+void *
 ngx_http_webp_create_loc_conf(ngx_conf_t *cf)
 {
     ngx_http_webp_loc_conf_t  *conf;
@@ -129,7 +129,7 @@ ngx_http_webp_create_loc_conf(ngx_conf_t *cf)
     return conf;
 }
 
-static char *
+char *
 ngx_http_webp_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
 {
     ngx_http_webp_loc_conf_t *prev = parent;
@@ -156,7 +156,7 @@ ngx_http_webp_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
     return NGX_CONF_OK;
 }
 
-static ngx_int_t
+ngx_int_t
 ngx_http_webp_init(ngx_conf_t *cf)
 {
     ngx_http_handler_pt        *h;
@@ -172,4 +172,36 @@ ngx_http_webp_init(ngx_conf_t *cf)
     *h = ngx_http_webp_handler;
 
     return NGX_OK;
+}
+
+char *
+ngx_http_webp_set_complex_value_slot(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
+{
+    char *p = conf;
+    ngx_http_complex_value_t **cv = (ngx_http_complex_value_t **) (p + cmd->offset);
+    ngx_str_t *value;
+    ngx_http_compile_complex_value_t ccv;
+
+    value = cf->args->elts;
+
+    if (*cv != NULL) {
+        return "is duplicate";
+    }
+
+*cv = ngx_palloc(cf->pool, sizeof(ngx_http_complex_value_t));
+    if (*cv == NULL) {
+        return NGX_CONF_ERROR;
+    }
+
+    ngx_memzero(&ccv, sizeof(ngx_http_compile_complex_value_t));
+
+    ccv.cf = cf;
+    ccv.value = &value[1];
+    ccv.complex_value = *cv;
+
+    if (ngx_http_compile_complex_value(&ccv) != NGX_OK) {
+        return NGX_CONF_ERROR;
+    }
+
+    return NGX_CONF_OK;
 }

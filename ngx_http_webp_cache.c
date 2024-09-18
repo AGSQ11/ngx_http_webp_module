@@ -59,10 +59,11 @@ ngx_http_webp_handler(ngx_http_request_t *r)
         return NGX_HTTP_TOO_MANY_REQUESTS;
     }
 
-    ngx_md5_t md5;
-    ngx_md5_init(&md5);
-    ngx_md5_update(&md5, r->unparsed_uri.data, r->unparsed_uri.len);
-    ngx_md5_final(hash, &md5);
+    u_char hash[SHA_DIGEST_LENGTH];
+    ngx_sha1_t sha1;
+    ngx_sha1_init(&sha1);
+    ngx_sha1_update(&sha1, r->unparsed_uri.data, r->unparsed_uri.len);
+    ngx_sha1_final(hash, &sha1);
 
     src_path = *uri;
     dst_path.len = conf->cache_dir.len + sizeof(hash) + 5;
@@ -150,10 +151,11 @@ ngx_http_webp_store_cache(ngx_http_request_t *r, ngx_str_t *webp_path, uint8_t *
     ngx_rbtree_node_t *node;
     u_char key[SHA256_DIGEST_LENGTH * 2];
 
-    ngx_md5_t md5;
-    ngx_md5_init(&md5);
-    ngx_md5_update(&md5, webp_path->data, webp_path->len);
-    ngx_md5_final(key, &md5);
+    u_char key[SHA_DIGEST_LENGTH];
+    ngx_sha1_t sha1;
+    ngx_sha1_init(&sha1);
+    ngx_sha1_update(&sha1, webp_path->data, webp_path->len);
+    ngx_sha1_final(key, &sha1);
 
     ngx_shmtx_lock(&shpool->mutex);
 

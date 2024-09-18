@@ -147,7 +147,7 @@ ngx_http_webp_convert_image(ngx_http_request_t *r, ngx_str_t *src_path, ngx_str_
     task->handler = ngx_http_webp_convert_thread_handler;
     task->ctx = ctx;
 
-    tp = ngx_thread_pool_get((ngx_cycle_t *) ngx_cycle, &ngx_thread_pool_name);
+    tp = ngx_thread_pool_get((ngx_cycle_t *) ngx_cycle, NULL);
     if (tp == NULL) {
         ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
                       "Failed to get thread pool");

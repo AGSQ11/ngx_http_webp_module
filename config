@@ -1,6 +1,6 @@
 ngx_addon_name=ngx_http_webp_module
 
-# Check if JPEG XL support should be enabled
+# Check for JPEG XL support
 ngx_feature="JPEG XL support"
 ngx_feature_name="NGX_HTTP_WEBP_JXL_ENABLED"
 ngx_feature_run=no
@@ -9,17 +9,35 @@ ngx_feature_path=
 ngx_feature_libs="-ljxl"
 ngx_feature_test="JxlEncoderCreate(NULL);"
 
-if [ "$HTTP_WEBP_JXL" != "NO" ]; then
-    . auto/feature
+. auto/feature
 
-    if [ $ngx_found = yes ]; then
-        have=NGX_HTTP_WEBP_JXL_ENABLED . auto/have
+if [ $ngx_found = yes ] && [ "$HTTP_WEBP_JXL" != "NO" ]; then
+    have=NGX_HTTP_WEBP_JXL_ENABLED . auto/have
+    echo "JPEG XL support is enabled"
+else
+    if [ "$HTTP_WEBP_JXL" = "NO" ]; then
+        echo "JPEG XL support is explicitly disabled."
     else
         echo "JPEG XL library not found. Disabling JPEG XL support."
-        HTTP_WEBP_JXL=NO
     fi
-else
-    echo "JPEG XL support is explicitly disabled."
+    HTTP_WEBP_JXL=NO
+fi
+
+# Check for thread pool support
+ngx_feature="Thread pool support"
+ngx_feature_name="NGX_THREADS"
+ngx_feature_run=no
+ngx_feature_incs="#include <ngx_thread_pool.h>"
+ngx_feature_path=
+ngx_feature_libs=
+ngx_feature_test="ngx_thread_pool_t pool;"
+
+. auto/feature
+
+if [ $ngx_found = no ]; then
+    echo "Warning: Thread pool support not detected."
+    echo "The module will be compiled, but it may not function correctly without thread pool support."
+    echo "Please ensure NGINX is compiled with the --with-threads option."
 fi
 
 if test -n "$ngx_module_link"; then
@@ -45,25 +63,4 @@ fi
 
 if [ "$HTTP_WEBP_JXL" = "NO" ]; then
     echo "JPEG XL support is disabled"
-else
-    echo "JPEG XL support is enabled"
 fi
-
-# Check for thread pool support
-ngx_feature="Thread pool support"
-ngx_feature_name="NGX_THREADS"
-ngx_feature_run=no
-ngx_feature_incs="#include <ngx_thread_pool.h>"
-ngx_feature_path=
-ngx_feature_libs=
-ngx_feature_test="ngx_thread_pool_t pool;"
-
-. auto/feature
-
-if [ $ngx_found = no ]; then
-    echo "Error: Thread pool support is required for this module."
-    echo "Please compile NGINX with --with-threads option."
-    exit 1
-fi
-
-have=NGX_THREADS . auto/have

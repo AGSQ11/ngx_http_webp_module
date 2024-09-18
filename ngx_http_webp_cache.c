@@ -5,7 +5,7 @@ ngx_http_webp_handler(ngx_http_request_t *r)
 {
     ngx_http_webp_loc_conf_t *conf;
     ngx_str_t src_path, dst_path, *uri;
-    u_char hash[SHA256_DIGEST_LENGTH * 2 + 1];
+    u_char hash[SHA_DIGEST_LENGTH * 2 + 1];
     ngx_str_t cache_key;
     ngx_uint_t quality;
     ngx_str_t res;
@@ -23,7 +23,7 @@ ngx_http_webp_handler(ngx_http_request_t *r)
         return NGX_DECLINED;
     }
 
-    ngx_str_t *accept = ngx_http_get_variable(r, &ngx_http_accept_header_key, 0);
+    ngx_http_variable_value_t *accept = ngx_http_get_variable(r, &ngx_http_accept_header_key, ngx_hash_key(ngx_http_accept_header_key.data, ngx_http_accept_header_key.len));
     if (accept == NULL || ngx_strstr(accept->data, "image/webp") == NULL) {
         NGX_HTTP_WEBP_LOG(NGX_LOG_DEBUG, r->connection->log, 0,
                           "Client does not support WebP");
@@ -59,7 +59,6 @@ ngx_http_webp_handler(ngx_http_request_t *r)
         return NGX_HTTP_TOO_MANY_REQUESTS;
     }
 
-    u_char hash[SHA_DIGEST_LENGTH];
     ngx_sha1_t sha1;
     ngx_sha1_init(&sha1);
     ngx_sha1_update(&sha1, r->unparsed_uri.data, r->unparsed_uri.len);
@@ -149,9 +148,8 @@ ngx_http_webp_store_cache(ngx_http_request_t *r, ngx_str_t *webp_path, uint8_t *
     ngx_slab_pool_t *shpool = (ngx_slab_pool_t *)conf->cache_zone->shm.addr;
     ngx_http_webp_cache_entry_t *entry;
     ngx_rbtree_node_t *node;
-    u_char key[SHA256_DIGEST_LENGTH * 2];
+    u_char key[SHA_DIGEST_LENGTH * 2];
 
-    u_char key[SHA_DIGEST_LENGTH];
     ngx_sha1_t sha1;
     ngx_sha1_init(&sha1);
     ngx_sha1_update(&sha1, webp_path->data, webp_path->len);

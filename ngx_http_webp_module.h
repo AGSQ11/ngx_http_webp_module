@@ -8,6 +8,7 @@
 #include <webp/encode.h>
 #include <webp/decode.h>
 #include <avif/avif.h>
+#include <ngx_sha1.h>
 
 #ifdef NGX_HTTP_WEBP_JXL_ENABLED
 #include <jxl/encode.h>
@@ -16,11 +17,11 @@
 
 #define NGX_HTTP_WEBP_LOG(level, log, err, fmt, ...) \
     ngx_log_error(level, log, err, "[ngx_http_webp_module] " fmt, ##__VA_ARGS__)
-extern ngx_str_t ngx_thread_pool_name;
-
-static ngx_str_t ngx_http_accept_header_key = ngx_string("Accept");
 
 extern ngx_module_t ngx_http_webp_module;
+extern ngx_str_t ngx_thread_pool_name;
+
+static ngx_str_t ngx_http_accept_header_key = ngx_string("accept");
 
 typedef struct {
     ngx_flag_t enable;

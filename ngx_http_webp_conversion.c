@@ -10,9 +10,9 @@ ngx_http_webp_convert_thread_handler(void *data, ngx_log_t *log)
     size_t webp_size;
 
     if (ngx_strstr(ctx->src_path.data, ".png")) {
-        raw_data = WebPDecodePNG(ctx->image_data, ctx->image_size, &width, &height);
+        raw_data = WebPDecodeRGBA(ctx->image_data, ctx->image_size, &width, &height);
     } else if (ngx_strstr(ctx->src_path.data, ".jpg") || ngx_strstr(ctx->src_path.data, ".jpeg")) {
-        raw_data = WebPDecodeJPEG(ctx->image_data, ctx->image_size, &width, &height);
+        raw_data = WebPDecodeRGBA(ctx->image_data, ctx->image_size, &width, &height);
     } else if (ngx_strstr(ctx->src_path.data, ".avif")) {
         avifDecoder *decoder = avifDecoderCreate();
         avifResult result = avifDecoderSetIOMemory(decoder, ctx->image_data, ctx->image_size);

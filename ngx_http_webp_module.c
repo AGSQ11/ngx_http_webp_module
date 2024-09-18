@@ -1,83 +1,62 @@
 #include "ngx_http_webp_module.h"
 
 static ngx_command_t ngx_http_webp_commands[] = {
-    { ngx_string("ENGIWBP"),
-      NGX_HTTP_LOC_CONF|NGX_CONF_FLAG,
-      ngx_conf_set_flag_slot,
-      NGX_HTTP_LOC_CONF_OFFSET,
-      offsetof(ngx_http_webp_loc_conf_t, enable),
-      NULL },
-
-    { ngx_string("webp_quality"),
-      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
-      ngx_conf_set_num_slot,
-      NGX_HTTP_LOC_CONF_OFFSET,
-      offsetof(ngx_http_webp_loc_conf_t, quality),
-      NULL },
-
-    { ngx_string("webp_cache_time"),
-      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
-      ngx_conf_set_sec_slot,
-      NGX_HTTP_LOC_CONF_OFFSET,
-      offsetof(ngx_http_webp_loc_conf_t, cache_time),
-      NULL },
-
-    { ngx_string("webp_cache_dir"),
-      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
-      ngx_conf_set_str_slot,
-      NGX_HTTP_LOC_CONF_OFFSET,
-      offsetof(ngx_http_webp_loc_conf_t, cache_dir),
-      NULL },
-
-    { ngx_string("webp_max_image_size"),
-      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
-      ngx_conf_set_size_slot,
-      NGX_HTTP_LOC_CONF_OFFSET,
-      offsetof(ngx_http_webp_loc_conf_t, max_image_size),
-      NULL },
-
-    { ngx_string("webp_max_cache_size"),
-      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
-      ngx_conf_set_size_slot,
-      NGX_HTTP_LOC_CONF_OFFSET,
-      offsetof(ngx_http_webp_loc_conf_t, max_cache_size),
-      NULL },
-
-    { ngx_string("webp_files_per_cleanup"),
-      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
-      ngx_conf_set_num_slot,
-      NGX_HTTP_LOC_CONF_OFFSET,
-      offsetof(ngx_http_webp_loc_conf_t, files_per_cleanup),
-      NULL },
-
-    { ngx_string("webp_convert_if"),
-      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
-      ngx_http_webp_set_complex_value_slot,
-      NGX_HTTP_LOC_CONF_OFFSET,
-      offsetof(ngx_http_webp_loc_conf_t, convert_if),
-      NULL },
-
-    { ngx_string("webp_quality_if"),
-      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
-      ngx_http_webp_set_complex_value_slot,
-      NGX_HTTP_LOC_CONF_OFFSET,
-      offsetof(ngx_http_webp_loc_conf_t, quality_if),
-      NULL },
-
-    { ngx_string("webp_rate_limit"),
-      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
-      ngx_conf_set_num_slot,
-      NGX_HTTP_LOC_CONF_OFFSET,
-      offsetof(ngx_http_webp_loc_conf_t, rate_limit),
-      NULL },
-
-    { ngx_string("webp_burst_limit"),
-      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
-      ngx_conf_set_num_slot,
-      NGX_HTTP_LOC_CONF_OFFSET,
-      offsetof(ngx_http_webp_loc_conf_t, burst_limit),
-      NULL },
-
+    {
+        ngx_string("ENGIWBP"),
+        NGX_HTTP_LOC_CONF | NGX_CONF_FLAG,
+        ngx_conf_set_flag_slot,
+        NGX_HTTP_LOC_CONF_OFFSET,
+        offsetof(ngx_http_webp_loc_conf_t, enable),
+        NULL
+    },
+    {
+        ngx_string("webp_quality"),
+        NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
+        ngx_conf_set_num_slot,
+        NGX_HTTP_LOC_CONF_OFFSET,
+        offsetof(ngx_http_webp_loc_conf_t, quality),
+        NULL
+    },
+    {
+        ngx_string("webp_cache_time"),
+        NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
+        ngx_conf_set_sec_slot,
+        NGX_HTTP_LOC_CONF_OFFSET,
+        offsetof(ngx_http_webp_loc_conf_t, cache_time),
+        NULL
+    },
+    {
+        ngx_string("webp_cache_dir"),
+        NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
+        ngx_conf_set_str_slot,
+        NGX_HTTP_LOC_CONF_OFFSET,
+        offsetof(ngx_http_webp_loc_conf_t, cache_dir),
+        NULL
+    },
+    {
+        ngx_string("webp_max_image_size"),
+        NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
+        ngx_conf_set_size_slot,
+        NGX_HTTP_LOC_CONF_OFFSET,
+        offsetof(ngx_http_webp_loc_conf_t, max_image_size),
+        NULL
+    },
+    {
+        ngx_string("webp_max_cache_size"),
+        NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
+        ngx_conf_set_size_slot,
+        NGX_HTTP_LOC_CONF_OFFSET,
+        offsetof(ngx_http_webp_loc_conf_t, max_cache_size),
+        NULL
+    },
+    {
+        ngx_string("webp_files_per_cleanup"),
+        NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
+        ngx_conf_set_num_slot,
+        NGX_HTTP_LOC_CONF_OFFSET,
+        offsetof(ngx_http_webp_loc_conf_t, files_per_cleanup),
+        NULL
+    },
     ngx_null_command
 };
 
@@ -110,7 +89,7 @@ ngx_module_t ngx_http_webp_module = {
 void *
 ngx_http_webp_create_loc_conf(ngx_conf_t *cf)
 {
-    ngx_http_webp_loc_conf_t  *conf;
+    ngx_http_webp_loc_conf_t *conf;
 
     conf = ngx_pcalloc(cf->pool, sizeof(ngx_http_webp_loc_conf_t));
     if (conf == NULL) {
@@ -123,8 +102,6 @@ ngx_http_webp_create_loc_conf(ngx_conf_t *cf)
     conf->max_image_size = NGX_CONF_UNSET_SIZE;
     conf->max_cache_size = NGX_CONF_UNSET_SIZE;
     conf->files_per_cleanup = NGX_CONF_UNSET_UINT;
-    conf->rate_limit = NGX_CONF_UNSET_UINT;
-    conf->burst_limit = NGX_CONF_UNSET_UINT;
 
     return conf;
 }
@@ -142,16 +119,6 @@ ngx_http_webp_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
     ngx_conf_merge_size_value(conf->max_image_size, prev->max_image_size, 10 * 1024 * 1024);
     ngx_conf_merge_size_value(conf->max_cache_size, prev->max_cache_size, 1024 * 1024 * 1024);
     ngx_conf_merge_uint_value(conf->files_per_cleanup, prev->files_per_cleanup, 100);
-    ngx_conf_merge_uint_value(conf->rate_limit, prev->rate_limit, 10);
-    ngx_conf_merge_uint_value(conf->burst_limit, prev->burst_limit, 20);
-
-    if (conf->convert_if == NULL) {
-        conf->convert_if = prev->convert_if;
-    }
-
-    if (conf->quality_if == NULL) {
-        conf->quality_if = prev->quality_if;
-    }
 
     return NGX_CONF_OK;
 }
@@ -159,8 +126,8 @@ ngx_http_webp_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
 ngx_int_t
 ngx_http_webp_init(ngx_conf_t *cf)
 {
-    ngx_http_handler_pt        *h;
-    ngx_http_core_main_conf_t  *cmcf;
+    ngx_http_handler_pt *h;
+    ngx_http_core_main_conf_t *cmcf;
 
     cmcf = ngx_http_conf_get_module_main_conf(cf, ngx_http_core_module);
 
@@ -174,34 +141,31 @@ ngx_http_webp_init(ngx_conf_t *cf)
     return NGX_OK;
 }
 
-char *
-ngx_http_webp_set_complex_value_slot(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
+ngx_int_t
+ngx_http_webp_init_process(ngx_cycle_t *cycle)
 {
-    char *p = conf;
-    ngx_http_complex_value_t **cv = (ngx_http_complex_value_t **) (p + cmd->offset);
-    ngx_str_t *value;
-    ngx_http_compile_complex_value_t ccv;
+    // Initialize any process-specific resources here
+    return NGX_OK;
+}
 
-    value = cf->args->elts;
+ngx_int_t
+ngx_http_webp_limit_req(ngx_http_request_t *r)
+{
+    // Implement a simple rate limiting logic
+    static ngx_atomic_t request_count = 0;
+    static ngx_msec_t last_checked = 0;
+    ngx_msec_t now = ngx_current_msec;
+    ngx_msec_t elapsed = now - last_checked;
+    ngx_int_t limit = 10; // Allow 10 requests per second
 
-    if (*cv != NULL) {
-        return "is duplicate";
+    if (elapsed > 1000) {
+        request_count = 0;
+        last_checked = now;
     }
 
-*cv = ngx_palloc(cf->pool, sizeof(ngx_http_complex_value_t));
-    if (*cv == NULL) {
-        return NGX_CONF_ERROR;
+    if (ngx_atomic_fetch_add(&request_count, 1) > limit) {
+        return NGX_HTTP_TOO_MANY_REQUESTS;
     }
 
-    ngx_memzero(&ccv, sizeof(ngx_http_compile_complex_value_t));
-
-    ccv.cf = cf;
-    ccv.value = &value[1];
-    ccv.complex_value = *cv;
-
-    if (ngx_http_compile_complex_value(&ccv) != NGX_OK) {
-        return NGX_CONF_ERROR;
-    }
-
-    return NGX_CONF_OK;
+    return NGX_OK;
 }
